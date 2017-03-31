@@ -81,15 +81,26 @@ if(slowcounter == 1000){
   }
 
  if (Serial.available()) {
-    delay(50);
+    delay(10);
     readToBuffer();
 
     if(bufferedInput[0] == 'u'){
       //Serial.println("move up a bit");
-      step(1,50);
+
+      if(bufferedInput[1] == 'm'){
+         step(0,4000);
+      }else{
+         step(0,50);
+      }
+     
     }else if(bufferedInput[0] == 'd'){
       //Serial.println("move down a bit");
-      step(0,50);
+      
+       if(bufferedInput[1] == 'm'){
+         step(0,4000);
+      }else{
+        step(1,50);
+      }
     }
  }
 }

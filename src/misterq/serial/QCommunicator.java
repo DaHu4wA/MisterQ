@@ -1,4 +1,4 @@
-package misterq;
+package misterq.serial;
 
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
@@ -12,7 +12,7 @@ import java.io.OutputStream;
 import java.util.Enumeration;
 
 
-public class SerialTest implements SerialPortEventListener {
+public class QCommunicator implements SerialPortEventListener {
     SerialPort serialPort;
 
     private static final String PORT_NAMES[] = {
@@ -90,22 +90,7 @@ public class SerialTest implements SerialPortEventListener {
     public synchronized void sendData(String data) throws IOException {
         output.write(data.getBytes());
         output.flush();
+        System.out.println("move down");
     }
 
-    public static void main(String[] args) throws Exception {
-        SerialTest main = new SerialTest();
-        main.initialize();
-        Thread t = new Thread() {
-            public void run() {
-                //the following line will keep this app alive for 1000 seconds,
-                //waiting for events to occur and responding to them (printing incoming messages to console).
-                try {
-                    Thread.sleep(1000000);
-                } catch (InterruptedException ie) {
-                }
-            }
-        };
-        t.start();
-        System.out.println("Started");
-    }
 }

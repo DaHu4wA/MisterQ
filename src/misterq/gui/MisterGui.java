@@ -13,11 +13,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import misterq.logic.CookingLogic;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class MisterGui extends Application {
+
+    CookingLogic cookingLogic;
 
     @FXML
     public Button btnReset;
@@ -61,6 +64,9 @@ public class MisterGui extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+
+        cookingLogic = new CookingLogic();
+
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("misterq/gui/maingui.fxml"));
 
         Scene scene = new Scene(root, 300, 275);
@@ -214,6 +220,9 @@ public class MisterGui extends Application {
     }
 
     private void startGrilling() {
+
+        cookingLogic.startCooking("Steak", 100, "Done");
+
         timer.setVisible(true);
         timer.setText("LETS ROCK!");
 
