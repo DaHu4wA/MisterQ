@@ -53,6 +53,9 @@ public class MisterGui extends Application {
     Label textHowDone;
 
     @FXML
+    Label tempLabel;
+
+    @FXML
     Label timer;
 
     private Food chosenFood;
@@ -66,7 +69,11 @@ public class MisterGui extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        cookingLogic = new CookingLogic();
+        cookingLogic = new CookingLogic(text -> Platform.runLater(() -> {
+            if (tempLabel != null) {
+                tempLabel.setText(text);
+            }
+        }));
 
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("misterq/gui/maingui.fxml"));
 
@@ -77,6 +84,9 @@ public class MisterGui extends Application {
         stage.show();
 
         Label toptText = (Label) root.lookup("#toptext");
+
+
+        tempLabel = (Label) root.lookup("#tempLabel");
 
         initialize(root, toptText);
 
@@ -92,6 +102,8 @@ public class MisterGui extends Application {
     }
 
     private void initialize(Parent root, Label toptText) {
+        tempLabel.setText("");
+
         timer = (Label) root.lookup("#timer");
         timer.setVisible(false);
 

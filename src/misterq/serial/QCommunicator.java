@@ -4,6 +4,7 @@ import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
+import misterq.logic.IncomingValueHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,6 +25,12 @@ public class QCommunicator implements SerialPortEventListener {
 
     private static final int TIME_OUT = 2000;
     private static final int DATA_RATE = 9600;
+
+    private IncomingValueHandler incomingValueHandler;
+
+    public QCommunicator(IncomingValueHandler incomingValueHandler) {
+        this.incomingValueHandler = incomingValueHandler;
+    }
 
     public void initialize() {
         System.setProperty("gnu.io.rxtx.SerialPorts", "COM5");
@@ -75,11 +82,7 @@ public class QCommunicator implements SerialPortEventListener {
         if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
             try {
                 String inputLine = input.readLine();
-                System.out.println("Received: " + inputLine);
-
-                if (inputLine.equals("Fire")) {
-                    sendData("u");
-                }
+                incomingValueHandler.messageIncoming(inputLine);
 
             } catch (Exception e) {
                 System.err.println(e.toString());
@@ -90,6 +93,38 @@ public class QCommunicator implements SerialPortEventListener {
     public synchronized void sendData(String data) throws IOException {
         output.write(data.getBytes());
         output.flush();
+    }
+
+    public void moveUp(boolean aLot) {
+        try {
+            sendData(aLot ? "um" : "u");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void moveDown(boolean aLot) {
+        try {
+            sendData(aLot ? "dm" : "d");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void servoZero() {
+        try {
+            sendData("s0");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void servo180() {
+        try {
+            sendData("s1");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -3,74 +3,106 @@ package misterq.logic;
 import misterq.gui.TextUpdateCallback;
 import misterq.serial.QCommunicator;
 
-import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * Created by stefa on 31.03.2017.
- */
+
 public class CookingLogic {
+
+    private static final int TIME_CONST = 15;
 
     private QCommunicator qComm;
 
-    public CookingLogic() {
-        qComm = new QCommunicator();
+    private TextUpdateCallback tempLabelUpdate;
+
+    private ThreadLocal<Integer> surroundingTemp = new ThreadLocal<>();
+
+    private IncomingValueHandler incomingValueHandler = new IncomingValueHandler() {
+
+        @Override
+        public void messageIncoming(String incomingText) {
+//            System.out.println("Received: " + incomingText);
+
+            // move up when Fire
+            if (incomingText.equals("Fire")) {
+                qComm.moveUp(false);
+            }
+
+            if (incomingText.startsWith("Temp=")) {
+                surroundingTemp.set(Integer.valueOf(incomingText.substring(5)));
+                if (tempLabelUpdate != null) {
+                    tempLabelUpdate.updateText("Grill temp: " + surroundingTemp.get());
+                }
+            }
+        }
+    };
+
+    public CookingLogic(TextUpdateCallback tempLabelUpdate) {
+        qComm = new QCommunicator(incomingValueHandler);
         qComm.initialize();
+        this.tempLabelUpdate = tempLabelUpdate;
     }
 
-    public void startCooking(Food food, DoneGrade doneGrade, int weight, TextUpdateCallback callback) {
+    public void startCooking(Food food, DoneGrade doneGrade, int weight, TextUpdateCallback bigLabelUpdate) {
+        qComm.servoZero();
+        int realTimeOneSide = computeRealTime(food.getSeconds(), weight);
 
-        new Timer().schedule(new TimerTask() {
-            int second = 60;
+        Timer initialTimer = new Timer();
+        initialTimer.schedule(new TimerTask() {
+            int counterSeconds = realTimeOneSide;
 
             @Override
             public void run() {
-                callback.updateText("Food is done in: " + second + "sec");
-
-                if (second == 60) {
-                    servoZero();
+                bigLabelUpdate.updateText("Food will be turned in: " + counterSeconds + "sec");
+                if (counterSeconds == 0) {
+                    firstTurnFood();
+                    initialTimer.cancel();
                 }
+                counterSeconds--;
+            }
 
-                if (second == 50) {
-                    servo180();
-                }
-                second--;
+            private void firstTurnFood() {
+                qComm.servo180();
+                Timer turnedTimer = new Timer();
+                turnedTimer.schedule(new TimerTask() {
+                    int counterSeconds = realTimeOneSide;
+
+                    @Override
+                    public void run() {
+                        bigLabelUpdate.updateText("Food will be done in: " + counterSeconds + "sec");
+
+                        if (counterSeconds == 0) {
+                            qComm.servoZero();
+                            checkIfFoodIsDone(bigLabelUpdate);
+                            turnedTimer.cancel();
+                        }
+                        counterSeconds--;
+                    }
+                }, 0, 1000);
             }
         }, 0, 1000);
 
+    }
+
+    private void checkIfFoodIsDone(TextUpdateCallback callback) {
+        callback.updateText("D O N E (not really, we have to check)");
+
 
     }
 
-    public void moveUp() {
-        try {
-            qComm.sendData("um");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static double convertWeight(int weight, int min, int max, int a, int b) {
+        return ((((double) b - (double) a) * ((double) weight - (double) min)) / ((double) max - (double) min)) + (double) a;
+
     }
 
-    public void moveDown() {
-        try {
-            qComm.sendData("dm");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    public static int computeRealTime(int initialTime, int weight) {
+        int realTime = 0;
 
-    public void servoZero() {
-        try {
-            qComm.sendData("s0");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+        // convert weight from 50 - 500 to 0-1
+        double convertedWeight = convertWeight(weight, 50, 500, 0, 1);
+        realTime = (int) (convertedWeight * initialTime + TIME_CONST);
+        System.out.println(realTime);
 
-    public void servo180() {
-        try {
-            qComm.sendData("s1");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        return realTime;
     }
 }
