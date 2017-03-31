@@ -16,8 +16,19 @@ public class CookingLogic {
         qComm.initialize();
     }
 
-    public void startCooking(String food, int weight, String howDone){
-        moveDown();
+    public void startCooking(String food, int weight, String howDone) {
+        //moveDown();
+
+//        servozero();
+//
+//        try {
+//            thread.sleep(5000);
+//        } catch (interruptedexception e) {
+//            e.printstacktrace();
+//        }
+
+        //servo180();
+
 //        try {
 //            moveDown();
 //            Thread.sleep(100);
@@ -35,7 +46,7 @@ public class CookingLogic {
 
     }
 
-    public void moveUp(){
+    public void moveUp() {
         try {
             qComm.sendData("um");
         } catch (IOException e) {
@@ -43,9 +54,25 @@ public class CookingLogic {
         }
     }
 
-    public void moveDown(){
+    public void moveDown() {
         try {
             qComm.sendData("dm");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void servoZero() {
+        try {
+            qComm.sendData("s0");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void servo180() {
+        try {
+            qComm.sendData("s1");
         } catch (IOException e) {
             e.printStackTrace();
         }

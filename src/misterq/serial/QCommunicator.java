@@ -90,7 +90,6 @@ public class QCommunicator implements SerialPortEventListener {
     public synchronized void sendData(String data) throws IOException {
         output.write(data.getBytes());
         output.flush();
-        System.out.println("move down");
     }
 
 }

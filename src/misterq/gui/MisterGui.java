@@ -235,6 +235,14 @@ public class MisterGui extends Application {
                     @Override
                     public void run() {
                         timer.setText("Food is done in: " + second + "sec");
+
+                        if(second == 60){
+                            cookingLogic.servoZero();
+                        }
+
+                        if(second == 50){
+                            cookingLogic.servo180();
+                        }
                         second--;
                     }
                 });

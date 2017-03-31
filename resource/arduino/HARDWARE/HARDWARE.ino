@@ -6,7 +6,6 @@ MeHumiture humiture(PORT_6);
 MePort port(PORT_3);
 
 Servo myservo1;  // create servo object to control a servo 
-Servo myservo2;  // create servo object to control another servo
 int16_t servo1pin =  port.pin1();//attaches the servo on PORT_3 SLOT1 to the servo object
 int16_t servo2pin =  port.pin2();//attaches the servo on PORT_3 SLOT2 to the servo object
 
@@ -42,11 +41,9 @@ void clearBuffer()
 void setup(){
   Serial.begin(9600);
   myservo1.attach(servo1pin);  // attaches the servo on servopin1
-  myservo2.attach(servo2pin);  // attaches the servo on servopin2
   pinMode(dirPin, OUTPUT);
   pinMode(stpPin, OUTPUT);
-  myservo1.write(0);               
-  myservo2.write(0);
+  myservo1.write(0);      
 }
 
 void loop(){
@@ -84,11 +81,12 @@ if(slowcounter == 1000){
     delay(10);
     readToBuffer();
 
+// STEPPER
     if(bufferedInput[0] == 'u'){
       //Serial.println("move up a bit");
 
       if(bufferedInput[1] == 'm'){
-         step(0,4000);
+         step(0,2000);
       }else{
          step(0,50);
       }
@@ -97,9 +95,17 @@ if(slowcounter == 1000){
       //Serial.println("move down a bit");
       
        if(bufferedInput[1] == 'm'){
-         step(0,4000);
+         step(1,2000);
       }else{
         step(1,50);
+      }
+    
+    // SERVO
+    }else if(bufferedInput[0] == 's'){
+       if(bufferedInput[1] == '0'){
+         myservo1.write(0);
+      }else{
+        myservo1.write(180);
       }
     }
  }
