@@ -21,8 +21,6 @@ public class CookingLogic {
 
         @Override
         public void messageIncoming(String incomingText) {
-//            System.out.println("Received: " + incomingText);
-
             // move up when Fire
             if (incomingText.equals("Fire")) {
                 qComm.moveUp(false);
@@ -55,36 +53,38 @@ public class CookingLogic {
             public void run() {
                 bigLabelUpdate.updateText("Food will be turned in: " + counterSeconds + "sec");
                 if (counterSeconds == 0) {
-                    firstTurnFood();
+                    firstTurnFood(realTimeOneSide, bigLabelUpdate);
                     initialTimer.cancel();
                 }
                 counterSeconds--;
             }
 
-            private void firstTurnFood() {
-                qComm.servo180();
-                Timer turnedTimer = new Timer();
-                turnedTimer.schedule(new TimerTask() {
-                    int counterSeconds = realTimeOneSide;
 
-                    @Override
-                    public void run() {
-                        bigLabelUpdate.updateText("Food will be done in: " + counterSeconds + "sec");
-
-                        if (counterSeconds == 0) {
-                            qComm.servoZero();
-                            checkIfFoodIsDone(bigLabelUpdate);
-                            turnedTimer.cancel();
-                        }
-                        counterSeconds--;
-                    }
-                }, 0, 1000);
-            }
         }, 0, 1000);
 
     }
 
-    private void checkIfFoodIsDone(TextUpdateCallback callback) {
+    private void firstTurnFood(int realTimeOneSide, TextUpdateCallback bigLabelUpdate) {
+        qComm.servo180();
+        Timer turnedTimer = new Timer();
+        turnedTimer.schedule(new TimerTask() {
+            int counterSeconds = realTimeOneSide;
+
+            @Override
+            public void run() {
+                bigLabelUpdate.updateText("Food will be done in: " + counterSeconds + "sec");
+
+                if (counterSeconds == 0) {
+                    qComm.servoZero();
+                    checkIfFoodIsDone(realTimeOneSide, bigLabelUpdate);
+                    turnedTimer.cancel();
+                }
+                counterSeconds--;
+            }
+        }, 0, 1000);
+    }
+
+    private void checkIfFoodIsDone(int realTimeOneSide, TextUpdateCallback callback) {
         callback.updateText("D O N E (not really, we have to check)");
 
 
