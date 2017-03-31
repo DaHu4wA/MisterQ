@@ -14,9 +14,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import misterq.logic.CookingLogic;
-
-import java.util.Timer;
-import java.util.TimerTask;
+import misterq.logic.DoneGrade;
+import misterq.logic.Food;
 
 public class MisterGui extends Application {
 
@@ -42,8 +41,6 @@ public class MisterGui extends Application {
     @FXML
     Button btn500g;
     @FXML
-    Button btn700g;
-    @FXML
     Label textWeight;
 
     @FXML
@@ -57,6 +54,10 @@ public class MisterGui extends Application {
 
     @FXML
     Label timer;
+
+    private Food chosenFood;
+    private int chosenGrams;
+    private DoneGrade doneGrade;
 
     public static void main(String[] args) {
         launch(args);
@@ -102,6 +103,7 @@ public class MisterGui extends Application {
                 toptText.setText("Mmhhh... Burger .. What a nice choice!");
                 hideInitialButtons(false);
                 hideGramsButtons(true);
+                chosenFood = Food.BURGER;
             }
         });
 
@@ -112,6 +114,7 @@ public class MisterGui extends Application {
                 toptText.setText("Steak. Wise choice, my friend!");
                 hideInitialButtons(false);
                 hideGramsButtons(true);
+                chosenFood = Food.STEAK;
             }
         });
 
@@ -122,6 +125,7 @@ public class MisterGui extends Application {
                 toptText.setText("Let's make some Chicken!");
                 hideInitialButtons(false);
                 hideGramsButtons(true);
+                chosenFood = Food.CHICKEN;
             }
         });
 
@@ -132,6 +136,7 @@ public class MisterGui extends Application {
                 toptText.setText("You want Sausage? Let's do it!");
                 hideInitialButtons(false);
                 hideGramsButtons(true);
+                chosenFood = Food.SAUSAGE;
             }
         });
         hideInitialButtons(true);
@@ -143,6 +148,7 @@ public class MisterGui extends Application {
                 hideGramsButtons(false);
                 hideHowDoneButtons(true);
                 toptText.setText(toptText.getText() + " - 100 Grams");
+                chosenGrams = 100;
             }
         });
         btn200g = (Button) root.lookup("#btn200g");
@@ -152,6 +158,7 @@ public class MisterGui extends Application {
                 hideGramsButtons(false);
                 hideHowDoneButtons(true);
                 toptText.setText(toptText.getText() + " - 200 Grams");
+                chosenGrams = 200;
             }
         });
         btn300g = (Button) root.lookup("#btn300g");
@@ -161,6 +168,7 @@ public class MisterGui extends Application {
                 hideGramsButtons(false);
                 hideHowDoneButtons(true);
                 toptText.setText(toptText.getText() + " - 300 Grams");
+                chosenGrams = 300;
             }
         });
         btn500g = (Button) root.lookup("#btn500g");
@@ -170,17 +178,10 @@ public class MisterGui extends Application {
                 hideGramsButtons(false);
                 hideHowDoneButtons(true);
                 toptText.setText(toptText.getText() + " - 500 Grams");
+                chosenGrams = 500;
             }
         });
-        btn700g = (Button) root.lookup("#btn700g");
-        btn700g.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                hideGramsButtons(false);
-                hideHowDoneButtons(true);
-                toptText.setText(toptText.getText() + " - 700 Grams");
-            }
-        });
+
         textWeight = (Label) root.lookup("#textWeight");
 
         btnRare = (Button) root.lookup("#btnRare");
@@ -189,6 +190,7 @@ public class MisterGui extends Application {
             public void handle(ActionEvent event) {
                 hideHowDoneButtons(false);
                 toptText.setText(toptText.getText() + " - Rare");
+                doneGrade = DoneGrade.RARE;
                 startGrilling();
             }
         });
@@ -199,6 +201,7 @@ public class MisterGui extends Application {
             public void handle(ActionEvent event) {
                 hideHowDoneButtons(false);
                 toptText.setText(toptText.getText() + " - Medium");
+                doneGrade = DoneGrade.MEDIUM;
                 startGrilling();
             }
         });
@@ -209,6 +212,7 @@ public class MisterGui extends Application {
             public void handle(ActionEvent event) {
                 hideHowDoneButtons(false);
                 toptText.setText(toptText.getText() + " - Done");
+                doneGrade = DoneGrade.DONE;
                 startGrilling();
             }
         });
@@ -220,34 +224,9 @@ public class MisterGui extends Application {
     }
 
     private void startGrilling() {
-
-        cookingLogic.startCooking("Steak", 100, "Done");
-
         timer.setVisible(true);
         timer.setText("LETS ROCK!");
-
-        new Timer().schedule(new TimerTask() {
-            int second = 60;
-
-            @Override
-            public void run() {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        timer.setText("Food is done in: " + second + "sec");
-
-                        if(second == 60){
-                            cookingLogic.servoZero();
-                        }
-
-                        if(second == 50){
-                            cookingLogic.servo180();
-                        }
-                        second--;
-                    }
-                });
-            }
-        }, 0, 1000);
+        cookingLogic.startCooking(chosenFood, doneGrade, chosenGrams, text -> Platform.runLater(() -> timer.setText(text)));
     }
 
     private void hideInitialButtons(boolean visible) {
@@ -262,7 +241,6 @@ public class MisterGui extends Application {
         btn200g.setVisible(visible);
         btn300g.setVisible(visible);
         btn500g.setVisible(visible);
-        btn700g.setVisible(visible);
         textWeight.setVisible(visible);
     }
 

@@ -70,11 +70,6 @@
                                 <Font size="19.0"/>
                             </font>
                         </Button>
-                        <Button fx:id="btn700g" mnemonicParsing="false" text="700g">
-                            <font>
-                                <Font size="19.0"/>
-                            </font>
-                        </Button>
                     </children>
                 </FlowPane>
                 <FlowPane prefHeight="33.0" prefWidth="502.0" GridPane.columnIndex="1" GridPane.rowIndex="1">

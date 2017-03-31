@@ -1,8 +1,11 @@
 package misterq.logic;
 
+import misterq.gui.TextUpdateCallback;
 import misterq.serial.QCommunicator;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by stefa on 31.03.2017.
@@ -16,33 +19,26 @@ public class CookingLogic {
         qComm.initialize();
     }
 
-    public void startCooking(String food, int weight, String howDone) {
-        //moveDown();
+    public void startCooking(Food food, DoneGrade doneGrade, int weight, TextUpdateCallback callback) {
 
-//        servozero();
-//
-//        try {
-//            thread.sleep(5000);
-//        } catch (interruptedexception e) {
-//            e.printstacktrace();
-//        }
+        new Timer().schedule(new TimerTask() {
+            int second = 60;
 
-        //servo180();
+            @Override
+            public void run() {
+                callback.updateText("Food is done in: " + second + "sec");
 
-//        try {
-//            moveDown();
-//            Thread.sleep(100);
-//            moveDown();
-//            Thread.sleep(100);
-//            moveDown();
-//            Thread.sleep(100);
-//            moveDown();
-//            Thread.sleep(100);
-//            moveDown();
-//            Thread.sleep(100);
-//        } catch (interruptedexception e) {
-//            e.printstacktrace();
-//        }
+                if (second == 60) {
+                    servoZero();
+                }
+
+                if (second == 50) {
+                    servo180();
+                }
+                second--;
+            }
+        }, 0, 1000);
+
 
     }
 
