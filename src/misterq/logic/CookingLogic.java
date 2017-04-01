@@ -17,19 +17,42 @@ public class CookingLogic {
 
     private ThreadLocal<Integer> surroundingTemp = new ThreadLocal<>();
 
+    private volatile boolean iAmOnFire = false;
+
     private IncomingValueHandler incomingValueHandler = new IncomingValueHandler() {
 
         @Override
         public void messageIncoming(String incomingText) {
             // move up when Fire
             if (incomingText.equals("Fire")) {
-                qComm.moveUp(false);
+
+                if (!iAmOnFire) {
+                    qComm.moveUp(true);
+                    iAmOnFire = true;
+
+                    Timer resetTimer = new Timer();
+                    resetTimer.schedule(new TimerTask() {
+                        int counterSeconds = 5;
+
+                        @Override
+                        public void run() {
+                            if (counterSeconds == 0) {
+                                iAmOnFire = false;
+                                qComm.moveHalfDown();
+                                resetTimer.cancel();
+                            }
+                            counterSeconds--;
+                        }
+
+
+                    }, 0, 1000);
+                }
             }
 
             if (incomingText.startsWith("Temp=")) {
                 surroundingTemp.set(Integer.valueOf(incomingText.substring(5)));
                 if (tempLabelUpdate != null) {
-                    tempLabelUpdate.updateText("Grill temp: " + surroundingTemp.get());
+                    tempLabelUpdate.updateText("Surface temperature: " + surroundingTemp.get() + "°C");
                 }
             }
         }
@@ -84,10 +107,48 @@ public class CookingLogic {
         }, 0, 1000);
     }
 
-    private void checkIfFoodIsDone(int realTimeOneSide, TextUpdateCallback callback) {
-        callback.updateText("D O N E (not really, we have to check)");
+    private void checkIfFoodIsDone(int realTimeOneSide, TextUpdateCallback bigLabelUpdate) {
+        bigLabelUpdate.updateText("Checking core temperature...");
+        Timer textTimer = new Timer();
+        textTimer.schedule(new TimerTask() {
+            int counterSeconds = 3;
 
+            @Override
+            public void run() {
+                if (counterSeconds == 0) {
 
+                    boolean isItDone = false;//new Random().nextBoolean();
+
+                    if (isItDone) {
+                        bigLabelUpdate.updateText("Perfect temperature reached! Enjoy your meal.");
+                    } else {
+                        qComm.servo180();
+                        foodNotDoneYet(bigLabelUpdate);
+                    }
+                    textTimer.cancel();
+                }
+                counterSeconds--;
+            }
+        }, 0, 1000);
+    }
+
+    private void foodNotDoneYet(TextUpdateCallback bigLabelUpdate) {
+        bigLabelUpdate.updateText("Not done yet, we need some time...");
+        Timer textTimer = new Timer();
+        textTimer.schedule(new TimerTask() {
+            int counterSeconds = 20;
+
+            @Override
+            public void run() {
+                bigLabelUpdate.updateText("Food will be done in: " + counterSeconds + "sec");
+                if (counterSeconds == 0) {
+                    bigLabelUpdate.updateText("Perfect temperature reached!");
+                    qComm.servoZero();
+                    textTimer.cancel();
+                }
+                counterSeconds--;
+            }
+        }, 0, 1000);
     }
 
     public static double convertWeight(int weight, int min, int max, int a, int b) {

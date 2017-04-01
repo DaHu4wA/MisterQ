@@ -103,9 +103,25 @@ public class QCommunicator implements SerialPortEventListener {
         }
     }
 
+    public void moveHalfUp() {
+        try {
+            sendData("uh");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void moveDown(boolean aLot) {
         try {
             sendData(aLot ? "dm" : "d");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void moveHalfDown() {
+        try {
+            sendData("dh");
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -86,17 +86,25 @@ if(slowcounter == 1000){
       //Serial.println("move up a bit");
 
       if(bufferedInput[1] == 'm'){
-         step(0,2000);
-      }else{
+         step(0,400);
+      }
+      else if(bufferedInput[1] == 'h'){
+         step(0,200);
+      }
+      else{
          step(0,50);
       }
      
     }else if(bufferedInput[0] == 'd'){
       //Serial.println("move down a bit");
       
-       if(bufferedInput[1] == 'm'){
-         step(1,2000);
-      }else{
+      if(bufferedInput[1] == 'm'){
+         step(1,400);
+      }
+      else if(bufferedInput[1] == 'h'){
+         step(1,200);
+      }
+      else{
         step(1,50);
       }
     
