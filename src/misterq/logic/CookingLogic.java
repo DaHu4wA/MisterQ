@@ -73,6 +73,9 @@ public class CookingLogic {
     }
 
     public void startCooking(Food food, DoneGrade doneGrade, int weight, TextUpdateCallback bigLabelUpdate) {
+
+        qComm.closeIt();
+
         //qComm.servoZero();
         qComm.moveDoubleDown();
         int realTimeOneSide = computeRealTime(food.getSeconds(), weight);
@@ -139,6 +142,8 @@ public class CookingLogic {
                             e.printStackTrace();
                         }
                         qComm.servoZero(true);
+                        qComm.open();
+                        qComm.buzzer(true);
                     } else {
                         qComm.servo180();
                         foodNotDoneYet(bigLabelUpdate);
@@ -170,6 +175,7 @@ public class CookingLogic {
                     qComm.moveDoubleUp();
                     qComm.servoZero(true);
                     qComm.buzzer(true);
+                    qComm.open();
                     textTimer.cancel();
                 }
                 counterSeconds--;
@@ -207,5 +213,13 @@ public class CookingLogic {
 
     public void manual180() {
         qComm.only180();
+    }
+
+    public void openIt() {
+        qComm.open();
+    }
+
+    public void closeIt() {
+        qComm.closeIt();
     }
 }

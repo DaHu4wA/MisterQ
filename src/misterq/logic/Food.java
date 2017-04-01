@@ -9,7 +9,7 @@ public enum Food {
 
     CHICKEN(210),
 
-    BURGER(150),
+    BURGER(50),
 
     SAUSAGE(180);
 

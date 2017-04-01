@@ -163,7 +163,7 @@ public class QCommunicator implements SerialPortEventListener {
 
     }
 
-    public void onlyZero()  {
+    public void onlyZero() {
         try {
             sendData("s0");
         } catch (IOException e) {
@@ -205,4 +205,44 @@ public class QCommunicator implements SerialPortEventListener {
         }
     }
 
+    public void open() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        try {
+            sendData("O");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    public void closeIt() {
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        try {
+            sendData("C");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

@@ -33,6 +33,9 @@ public class MisterGui extends Application {
     private Button btnSausage;
 
     @FXML
+    public Button btnStart;
+
+    @FXML
     Button btn100g;
     @FXML
     Button btn200g;
@@ -99,6 +102,22 @@ public class MisterGui extends Application {
                              }
         );
 
+        Button btnOpen = (Button) root.lookup("#open");
+        btnOpen.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                cookingLogic.openIt();
+            }
+        });
+
+        Button btnClose = (Button) root.lookup("#close");
+        btnClose.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                cookingLogic.closeIt();
+            }
+        });
+
         Button btnUp = (Button) root.lookup("#btnUp");
         btnUp.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -134,6 +153,17 @@ public class MisterGui extends Application {
     }
 
     private void initialize(Parent root, Label toptText) {
+        btnStart = (Button) root.lookup("#btnStart");
+        btnStart.setVisible(false);
+        btnStart.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                btnStart.setVisible(false);
+                startGrilling();
+            }
+        });
+
+
         tempLabel.setText("");
 
         timer = (Label) root.lookup("#timer");
@@ -235,7 +265,8 @@ public class MisterGui extends Application {
                 hideHowDoneButtons(false);
                 toptText.setText(toptText.getText() + " - Rare");
                 doneGrade = DoneGrade.RARE;
-                startGrilling();
+                btnStart.setVisible(true);
+                cookingLogic.openIt();
             }
         });
 
@@ -246,7 +277,8 @@ public class MisterGui extends Application {
                 hideHowDoneButtons(false);
                 toptText.setText(toptText.getText() + " - Medium");
                 doneGrade = DoneGrade.MEDIUM;
-                startGrilling();
+                btnStart.setVisible(true);
+                cookingLogic.openIt();
             }
         });
 
@@ -257,7 +289,8 @@ public class MisterGui extends Application {
                 hideHowDoneButtons(false);
                 toptText.setText(toptText.getText() + " - Done");
                 doneGrade = DoneGrade.DONE;
-                startGrilling();
+                btnStart.setVisible(true);
+                cookingLogic.openIt();
             }
         });
 

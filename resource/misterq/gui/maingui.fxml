@@ -189,6 +189,13 @@
       <Button fx:id="btnUp" layoutX="150.0" layoutY="661.0" mnemonicParsing="false" text="Up" />
       <Button fx:id="btnDown" layoutX="237.0" layoutY="661.0" mnemonicParsing="false" text="Down" />
       <Button fx:id="btnZero" layoutX="360.0" layoutY="661.0" mnemonicParsing="false" text="Zero" />
-      <Button layoutX="478.0" layoutY="661.0" mnemonicParsing="false" text="180" fx:id="btn180"/>
+      <Button fx:id="btn180" layoutX="478.0" layoutY="661.0" mnemonicParsing="false" text="180" />
+      <Button fx:id="btnStart" layoutX="92.0" layoutY="299.0" mnemonicParsing="false" text="Start!">
+         <font>
+            <Font size="49.0" />
+         </font>
+      </Button>
+      <Button layoutX="587.0" layoutY="661.0" mnemonicParsing="false" text="Close" fx:id="close"/>
+      <Button layoutX="715.0" layoutY="661.0" mnemonicParsing="false" text="Open" fx:id="open"/>
     </children>
 </AnchorPane>
