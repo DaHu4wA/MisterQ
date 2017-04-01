@@ -186,5 +186,9 @@
             <Font size="35.0" />
          </font>
       </Label>
+      <Button fx:id="btnUp" layoutX="150.0" layoutY="661.0" mnemonicParsing="false" text="Up" />
+      <Button fx:id="btnDown" layoutX="237.0" layoutY="661.0" mnemonicParsing="false" text="Down" />
+      <Button fx:id="btnZero" layoutX="360.0" layoutY="661.0" mnemonicParsing="false" text="Zero" />
+      <Button layoutX="478.0" layoutY="661.0" mnemonicParsing="false" text="180" fx:id="btn180"/>
     </children>
 </AnchorPane>

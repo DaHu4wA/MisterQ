@@ -3,13 +3,14 @@ package misterq.logic;
 import misterq.gui.TextUpdateCallback;
 import misterq.serial.QCommunicator;
 
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 
 public class CookingLogic {
 
-    private static final int TIME_CONST = 15;
+    private static final int TIME_CONST = 5;
 
     private QCommunicator qComm;
 
@@ -27,7 +28,14 @@ public class CookingLogic {
             if (incomingText.equals("Fire")) {
 
                 if (!iAmOnFire) {
+                    qComm.buzzer(false);
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     qComm.moveUp(true);
+
                     iAmOnFire = true;
 
                     Timer resetTimer = new Timer();
@@ -38,7 +46,7 @@ public class CookingLogic {
                         public void run() {
                             if (counterSeconds == 0) {
                                 iAmOnFire = false;
-                                qComm.moveHalfDown();
+                                qComm.moveDown(true);
                                 resetTimer.cancel();
                             }
                             counterSeconds--;
@@ -65,8 +73,8 @@ public class CookingLogic {
     }
 
     public void startCooking(Food food, DoneGrade doneGrade, int weight, TextUpdateCallback bigLabelUpdate) {
+        //qComm.servoZero();
         qComm.moveDoubleDown();
-        qComm.servoZero();
         int realTimeOneSide = computeRealTime(food.getSeconds(), weight);
 
         Timer initialTimer = new Timer();
@@ -89,7 +97,9 @@ public class CookingLogic {
     }
 
     private void firstTurnFood(int realTimeOneSide, TextUpdateCallback bigLabelUpdate) {
+
         qComm.servo180();
+
         Timer turnedTimer = new Timer();
         turnedTimer.schedule(new TimerTask() {
             int counterSeconds = realTimeOneSide;
@@ -99,7 +109,7 @@ public class CookingLogic {
                 bigLabelUpdate.updateText("Food will be done in: " + counterSeconds + "sec");
 
                 if (counterSeconds == 0) {
-                    qComm.servoZero();
+                    qComm.servoZero(false);
                     checkIfFoodIsDone(realTimeOneSide, bigLabelUpdate);
                     turnedTimer.cancel();
                 }
@@ -118,11 +128,17 @@ public class CookingLogic {
             public void run() {
                 if (counterSeconds == 0) {
 
-                    boolean isItDone = false;//new Random().nextBoolean();
+                    boolean isItDone = new Random().nextBoolean();
 
                     if (isItDone) {
-                        bigLabelUpdate.updateText("Perfect temperature reached! Enjoy your meal.");
-                        qComm.moveDoubleUp();
+                        bigLabelUpdate.updateText("Perfect temperature reached!");
+                        qComm.buzzer(true);
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        qComm.servoZero(true);
                     } else {
                         qComm.servo180();
                         foodNotDoneYet(bigLabelUpdate);
@@ -145,8 +161,15 @@ public class CookingLogic {
                 bigLabelUpdate.updateText("Food will be done in: " + counterSeconds + "sec");
                 if (counterSeconds == 0) {
                     bigLabelUpdate.updateText("Perfect temperature reached!");
+                    qComm.buzzer(false);
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     qComm.moveDoubleUp();
-                    qComm.servoZero();
+                    qComm.servoZero(true);
+                    qComm.buzzer(true);
                     textTimer.cancel();
                 }
                 counterSeconds--;
@@ -168,5 +191,21 @@ public class CookingLogic {
         System.out.println(realTime);
 
         return realTime;
+    }
+
+    public void manualUp() {
+        qComm.moveUp(true);
+    }
+
+    public void manualDown() {
+        qComm.moveDown(true);
+    }
+
+    public void manualZero() {
+        qComm.onlyZero();
+    }
+
+    public void manual180() {
+        qComm.only180();
     }
 }

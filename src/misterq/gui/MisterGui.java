@@ -99,6 +99,38 @@ public class MisterGui extends Application {
                              }
         );
 
+        Button btnUp = (Button) root.lookup("#btnUp");
+        btnUp.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                cookingLogic.manualUp();
+            }
+        });
+
+        Button btnDown = (Button) root.lookup("#btnDown");
+        btnDown.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                cookingLogic.manualDown();
+            }
+        });
+
+        Button btnZero = (Button) root.lookup("#btnZero");
+        btnZero.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                cookingLogic.manualZero();
+            }
+        });
+
+        Button btn180 = (Button) root.lookup("#btn180");
+        btn180.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                cookingLogic.manual180();
+            }
+        });
+
     }
 
     private void initialize(Parent root, Label toptText) {

@@ -17,7 +17,7 @@ public class QCommunicator implements SerialPortEventListener {
     SerialPort serialPort;
 
     private static final String PORT_NAMES[] = {
-            "/dev/tty.usbserial-A9007UX1", "/dev/ttyACM0", "/dev/ttyUSB0", "COM7"
+            "/dev/tty.usbserial-A9007UX1", "/dev/ttyACM0", "/dev/ttyUSB0", "COM5"
     };
 
     private BufferedReader input;
@@ -33,7 +33,7 @@ public class QCommunicator implements SerialPortEventListener {
     }
 
     public void initialize() {
-        System.setProperty("gnu.io.rxtx.SerialPorts", "COM7");
+        System.setProperty("gnu.io.rxtx.SerialPorts", "COM5");
 
         CommPortIdentifier portId = null;
         Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
@@ -143,21 +143,63 @@ public class QCommunicator implements SerialPortEventListener {
         }
     }
 
-    public void servoZero() {
+    public void servoZero(boolean noDown) {
+        moveDoubleUp();
         try {
-            moveUp(true);
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        onlyZero();
+
+        if (!noDown) {
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            moveDoubleDown();
+        }
+
+    }
+
+    public void onlyZero()  {
+        try {
             sendData("s0");
-            moveDown(true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void buzzer(boolean longBeep) {
+
+        try {
+            // todo
+            sendData(longBeep ? "b" : "q");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void servo180() {
+        moveDoubleUp();
         try {
-            moveUp(true);
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        only180();
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        moveDoubleDown();
+    }
+
+    public void only180() {
+        try {
             sendData("s1");
-            moveDown(true);
         } catch (IOException e) {
             e.printStackTrace();
         }
