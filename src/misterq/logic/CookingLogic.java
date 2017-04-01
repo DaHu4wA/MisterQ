@@ -65,6 +65,7 @@ public class CookingLogic {
     }
 
     public void startCooking(Food food, DoneGrade doneGrade, int weight, TextUpdateCallback bigLabelUpdate) {
+        qComm.moveDoubleDown();
         qComm.servoZero();
         int realTimeOneSide = computeRealTime(food.getSeconds(), weight);
 
@@ -121,6 +122,7 @@ public class CookingLogic {
 
                     if (isItDone) {
                         bigLabelUpdate.updateText("Perfect temperature reached! Enjoy your meal.");
+                        qComm.moveDoubleUp();
                     } else {
                         qComm.servo180();
                         foodNotDoneYet(bigLabelUpdate);
@@ -143,6 +145,7 @@ public class CookingLogic {
                 bigLabelUpdate.updateText("Food will be done in: " + counterSeconds + "sec");
                 if (counterSeconds == 0) {
                     bigLabelUpdate.updateText("Perfect temperature reached!");
+                    qComm.moveDoubleUp();
                     qComm.servoZero();
                     textTimer.cancel();
                 }

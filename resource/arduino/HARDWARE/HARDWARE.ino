@@ -6,11 +6,15 @@ MeHumiture humiture(PORT_6);
 MePort port(PORT_3);
 
 Servo myservo1;  // create servo object to control a servo 
+
 int16_t servo1pin =  port.pin1();//attaches the servo on PORT_3 SLOT1 to the servo object
 int16_t servo2pin =  port.pin2();//attaches the servo on PORT_3 SLOT2 to the servo object
 
 int dirPin = mePort[PORT_1].s1;//the direction pin connect to Base Board PORT1 SLOT1
 int stpPin = mePort[PORT_1].s2;//the Step pin connect to Base Board PORT1 SLOT2
+
+int dirPin2 = mePort[PORT_2].s1;//the direction pin connect to Base Board PORT1 SLOT1
+int stpPin2 = mePort[PORT_2].s2;//the Step pin connect to Base Board PORT1 SLOT2
 
 int inputCounter;
 char bufferedInput[200];
@@ -43,7 +47,11 @@ void setup(){
   myservo1.attach(servo1pin);  // attaches the servo on servopin1
   pinMode(dirPin, OUTPUT);
   pinMode(stpPin, OUTPUT);
-  myservo1.write(0);      
+
+  pinMode(dirPin2, OUTPUT);
+  pinMode(stpPin2, OUTPUT);
+  
+  myservo1.write(-100);      
 }
 
 void loop(){
@@ -90,6 +98,8 @@ if(slowcounter == 1000){
       }
       else if(bufferedInput[1] == 'h'){
          step(0,200);
+      }else if(bufferedInput[1] == 'x'){
+         step(0,1000);
       }
       else{
          step(0,50);
@@ -103,6 +113,8 @@ if(slowcounter == 1000){
       }
       else if(bufferedInput[1] == 'h'){
          step(1,200);
+      }else if(bufferedInput[1] == 'x'){
+         step(1,1000);
       }
       else{
         step(1,50);
@@ -111,9 +123,9 @@ if(slowcounter == 1000){
     // SERVO
     }else if(bufferedInput[0] == 's'){
        if(bufferedInput[1] == '0'){
-         myservo1.write(0);
+         myservo1.write(-100);
       }else{
-        myservo1.write(180);
+        myservo1.write(280);
       }
     }
  }
@@ -122,12 +134,15 @@ if(slowcounter == 1000){
 void step(boolean dir,int steps)
 {
   digitalWrite(dirPin,dir);
+  digitalWrite(dirPin2,!dir);
   delay(50);
   for(int i=0;i<steps;i++)
   {
-    digitalWrite(stpPin, HIGH);
-    delayMicroseconds(800);
     digitalWrite(stpPin, LOW);
+    digitalWrite(stpPin2, LOW);
+    delayMicroseconds(800);
+    digitalWrite(stpPin, HIGH);
+    digitalWrite(stpPin2, HIGH);
     delayMicroseconds(800); 
   }
 }

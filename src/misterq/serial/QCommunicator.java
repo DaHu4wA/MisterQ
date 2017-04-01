@@ -17,7 +17,7 @@ public class QCommunicator implements SerialPortEventListener {
     SerialPort serialPort;
 
     private static final String PORT_NAMES[] = {
-            "/dev/tty.usbserial-A9007UX1", "/dev/ttyACM0", "/dev/ttyUSB0", "COM5"
+            "/dev/tty.usbserial-A9007UX1", "/dev/ttyACM0", "/dev/ttyUSB0", "COM7"
     };
 
     private BufferedReader input;
@@ -33,7 +33,7 @@ public class QCommunicator implements SerialPortEventListener {
     }
 
     public void initialize() {
-        System.setProperty("gnu.io.rxtx.SerialPorts", "COM5");
+        System.setProperty("gnu.io.rxtx.SerialPorts", "COM7");
 
         CommPortIdentifier portId = null;
         Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
@@ -111,6 +111,14 @@ public class QCommunicator implements SerialPortEventListener {
         }
     }
 
+    public void moveDoubleUp() {
+        try {
+            sendData("ux");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void moveDown(boolean aLot) {
         try {
             sendData(aLot ? "dm" : "d");
@@ -127,9 +135,19 @@ public class QCommunicator implements SerialPortEventListener {
         }
     }
 
+    public void moveDoubleDown() {
+        try {
+            sendData("dx");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void servoZero() {
         try {
+            moveUp(true);
             sendData("s0");
+            moveDown(true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -137,7 +155,9 @@ public class QCommunicator implements SerialPortEventListener {
 
     public void servo180() {
         try {
+            moveUp(true);
             sendData("s1");
+            moveDown(true);
         } catch (IOException e) {
             e.printStackTrace();
         }
